@@ -1,0 +1,41 @@
+services:
+
+  # ── Backend: FastAPI + SQLite ──────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kaze_backend
+    restart: unless-stopped
+    volumes:
+      # Persistencia de la base de datos SQLite fuera del contenedor
+      - sqlite_data:/app/data
+    environment:
+      # Si en algún momento querés cambiar la ruta de la DB, editá acá
+      - DATABASE_URL=sqlite:////app/data/sql_app.db
+    networks:
+      - kaze_network
+
+  # ── Frontend: React + Nginx ────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Le dice a Vite dónde está el backend durante el build
+        VITE_API_URL: http://localhost/api
+    container_name: kaze_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - kaze_network
+
+volumes:
+  sqlite_data:
+
+networks:
+  kaze_network:
+    driver: bridge

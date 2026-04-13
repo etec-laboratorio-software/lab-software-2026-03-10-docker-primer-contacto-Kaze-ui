@@ -6,7 +6,7 @@ import './App.css';
 //LA IP DE ABAJO ES UNA IP FIJA QUE CORRESPONDE A LA PC QUE EJECUTA EL BACK, SE DEBE ACTUALIZAR SEGUN DONDE SE EJECUTE EL BACK (PCA)
 // Cliente API con Interceptor
 const apiClient = axios.create({
-  baseURL: 'http://192.168.42.71:8000'
+  baseURL: import.meta.env.VITE_API_URL || '/api'
 });
 
 apiClient.interceptors.request.use(
@@ -84,13 +84,35 @@ function App() {
   const handleLoginChange = (e) => setLoginForm({ ...loginForm, [e.target.name]: e.target.value });
 
   const handleRegister = async (e) => {
-    e.preventDefault(); setError('');
-    try {
-      await apiClient.post('/api/auth/register', registerForm);
-      alert('¡Registro exitoso! Inicia sesión.');
-      setRegisterForm({ nombre_usuario: '', email: '', password: '', nombre: '', apellido: '' });
-    } catch (err) { setError(err.response?.data?.detail || 'Error en registro'); }
-  };
+  e.preventDefault(); setError('');
+  try {
+    // 1. Registrar el usuario
+    await apiClient.post('/api/auth/register', registerForm);
+
+    // 2. Hacer login automático con las mismas credenciales
+    const formData = new URLSearchParams();
+    formData.append('username', registerForm.nombre_usuario);
+    formData.append('password', registerForm.password);
+    formData.append('grant_type', 'password');
+
+    const response = await apiClient.post('/api/auth/login', formData, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+
+    // 3. Guardar el token y entrar al sitio
+    setToken(response.data.access_token);
+    localStorage.setItem('token', response.data.access_token);
+    setRegisterForm({ nombre_usuario: '', email: '', password: '', nombre: '', apellido: '' });
+
+  } catch (err) {
+  const detail = err.response?.data?.detail;
+  if (Array.isArray(detail)) {
+    setError(detail.map(e => e.msg).join(', '));
+  } else {
+    setError(detail || 'Error en registro');
+  }
+}
+};
 
   const handleLogin = async (e) => {
     e.preventDefault(); setError('');

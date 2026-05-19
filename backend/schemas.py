@@ -160,11 +160,11 @@ class NotificacionUnreadResponse(BaseModel):
 
 class UsuarioCreate(BaseModel):
     """ Schema para la creación (registro) de un nuevo usuario """
-    nombre_usuario: str = Field(..., min_length=3, max_length=50)
-    email: str = Field(..., max_length=100)
-    password: str = Field(..., min_length=8, description="La contraseña en texto plano")
-    nombre: str = Field(..., max_length=100)
-    apellido: str = Field(..., max_length=100)
+    nombre_usuario: str = Field(..., min_length=4, max_length=50)
+    email: str = Field(..., min_length=15, max_length=100)
+    password: str = Field(..., min_length=9, description="La contraseña en texto plano")
+    nombre: str = Field(..., min_length=4, max_length=100)
+    apellido: str = Field(..., min_length=4, max_length=100)
     telefono: Optional[str] = None
 
 class UsuarioResponse(BaseModel):

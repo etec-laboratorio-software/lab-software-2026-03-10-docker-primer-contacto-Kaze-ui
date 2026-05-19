@@ -212,6 +212,28 @@ function App() {
               <button type="submit">Registrar</button>
             </form>
           </div>
+
+          <div className="requirements-container">
+            <h3>📋 Requisitos de Registro</h3>
+            <ul className="requirements-list">
+              <li>
+                <strong>Usuario:</strong> Mínimo 4 caracteres, máximo 50
+              </li>
+              <li>
+                <strong>Email:</strong> Mínimo 15 caracteres, máximo 100
+              </li>
+              <li>
+                <strong>Contraseña:</strong> Mínimo 9 caracteres
+              </li>
+              <li>
+                <strong>Nombre:</strong> Mínimo 4 caracteres, máximo 100
+              </li>
+              <li>
+                <strong>Apellido:</strong> Mínimo 4 caracteres, máximo 100
+              </li>
+            </ul>
+          </div>
+
           <div className="form-container">
             <h2>Login</h2>
             <form onSubmit={handleLogin}>

@@ -89,8 +89,7 @@ def get_producto(id_producto: int, db: Session = Depends(get_db)):
 def create_producto(
     producto: schemas.ProductoCreate, 
     db: Session = Depends(get_db),
-    # --- CORREGIDO (Issue 10) ---
-    current_user: models.Usuario = Depends(require_admin)
+    current_user: models.Usuario = Depends(get_current_user)
 ):
     db_producto = models.Producto(**producto.model_dump())
     db.add(db_producto)
